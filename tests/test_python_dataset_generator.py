@@ -8,33 +8,31 @@ test_python_dataset_generator
 Tests for `python_dataset_generator` module.
 """
 
-import pytest
-
-from contextlib import contextmanager
-from click.testing import CliRunner
-
+import unittest
+from unittest.mock import MagicMock, patch
 from python_dataset_generator import python_dataset_generator
-from python_dataset_generator import cli
 
 
-class TestPython_dataset_generator(object):
+class TestPython_dataset_generator(unittest.TestCase):
 
-    @classmethod
-    def setup_class(cls):
-        pass
+    def setUp(self):
+        self.generator = python_dataset_generator.python_dataset_generator()
 
-    def test_something(self):
-        pass
-    def test_command_line_interface(self):
-        runner = CliRunner()
-        result = runner.invoke(cli.main)
-        assert result.exit_code == 0
-        assert 'python_dataset_generator.cli.main' in result.output
-        help_result = runner.invoke(cli.main, ['--help'])
-        assert help_result.exit_code == 0
-        assert '--help  Show this message and exit.' in help_result.output
+    def test_default_instantiation(self):
+        generator = python_dataset_generator.python_dataset_generator()
+        self.assertIsInstance(generator, python_dataset_generator.python_dataset_generator)
 
-    @classmethod
-    def teardown_class(cls):
+    def test_saving_out_to_file(self):
+        mock = MagicMock()
+
+        open_name = '%s.open' % __name__
+        with patch(open_name, mock, create=True):
+            with open(self.generator._filename, 'w') as f:
+                f.write('')
+
+        self.generator.save()
+        mock.assert_called_once_with(self.generator._filename, 'w')
+
+    def tearDown(self):
         pass
 
