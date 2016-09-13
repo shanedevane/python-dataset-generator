@@ -10,7 +10,7 @@ DEFAULT_ROWS = 10000
 DEFAULT_DELIMITER = ','
 
 
-class python_dataset_generator:
+class PythonDataSetGenerator:
 
     def __init__(self, rows=10000, delimiter=',', filename='dataset_output.csv'):
         self._rows = rows
@@ -120,19 +120,22 @@ class python_dataset_generator:
         self._generate()
 
 if __name__ == "__main__":
-    generator = python_dataset_generator()
+    generator = PythonDataSetGenerator()
     generator.add_factor('photo_width', [2000, 5000], [1, 1000])
     generator.add_factor('photo_colours', [12000, 55886], [1, 9000])
     generator.save()
 
 
-"""
+"""s
     TO DO
    - the mixed data can be from the lower and upper boundaries of the good/bad
    - accommodate floating vs int
    - accountmodate the good being -numbers
    - accommodate when the bad values are above the good values when doing the mixed thing
    - allow for a default file?
-
-
+   - pep 8 convention
+   - more unit tests
+   - property testing test?
+   - conditional data ranges
+    -: first_time_user and usage_amount. if someone is first time user, then usage_amount == 0 etc.
 """

@@ -10,16 +10,16 @@ Tests for `python_dataset_generator` module.
 
 import unittest
 from unittest.mock import MagicMock, patch
-from python_dataset_generator import python_dataset_generator
+from python_dataset_generator.python_dataset_generator import PythonDataSetGenerator
 
 
 class TestPython_dataset_generator(unittest.TestCase):
 
     def setUp(self):
-        self.generator = python_dataset_generator.python_dataset_generator()
+        self.generator = PythonDataSetGenerator()
 
     def test_default_instantiation(self):
-        self.assertIsInstance(self.generator, python_dataset_generator.python_dataset_generator)
+        self.assertIsInstance(self.generator, PythonDataSetGenerator)
 
     def test_saving_out_to_file(self):
         mock = MagicMock()
@@ -34,6 +34,9 @@ class TestPython_dataset_generator(unittest.TestCase):
 
     def test_add_a_factor(self):
         self.generator.add_factor('factor_name', [34, 33], [344, 343])
+
+    def test_add_a_factor_int_only(self):
+        self.generator.add_factor('factor_name', 0, 10)
 
 
     def tearDown(self):
