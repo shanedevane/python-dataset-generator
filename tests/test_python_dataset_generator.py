@@ -19,8 +19,7 @@ class TestPython_dataset_generator(unittest.TestCase):
         self.generator = python_dataset_generator.python_dataset_generator()
 
     def test_default_instantiation(self):
-        generator = python_dataset_generator.python_dataset_generator()
-        self.assertIsInstance(generator, python_dataset_generator.python_dataset_generator)
+        self.assertIsInstance(self.generator, python_dataset_generator.python_dataset_generator)
 
     def test_saving_out_to_file(self):
         mock = MagicMock()
@@ -32,6 +31,10 @@ class TestPython_dataset_generator(unittest.TestCase):
 
         self.generator.save()
         mock.assert_called_once_with(self.generator._filename, 'w')
+
+    def test_add_a_factor(self):
+        self.generator.add_factor('factor_name', [34, 33], [344, 343])
+
 
     def tearDown(self):
         pass

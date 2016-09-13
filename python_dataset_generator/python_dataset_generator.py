@@ -15,9 +15,16 @@ class python_dataset_generator:
         self._rows = rows
         self._delimiter = delimiter
         self._filename = filename
+        self._factors = list()
 
-    def add_factor(self, name, good_range, bad_range, ratio, mixed=False):
-        pass
+    def add_factor(self, name, good_range, bad_range, ratio=50, mixed=False):
+        self._factors.append({
+            'name': name,
+            'good_range': good_range,
+            'bad_range': bad_range,
+            'ratio': ratio,
+            'mixed': mixed
+        })
 
     def _generate(self):
         pass
