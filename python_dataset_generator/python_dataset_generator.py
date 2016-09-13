@@ -20,30 +20,17 @@ class python_dataset_generator:
         self._last_factor = 0
         self._generated_rows = 0
         self._positive_ratio = 50
-        self._enable_incremental_id = True
+        self.enable_incremental_id = True
+        self.enable_mixed_data = False
 
-    def add_factor(self, name, good_range, bad_range, ratio=33, mixed=False):
-        factor = namedtuple('Factor', 'name good_range bad_range ratio mixed current_ratio current_amount')
+    def add_factor(self, name, good_range, bad_range, mixed=False):
+        factor = namedtuple('Factor', 'name good_range bad_range mixed')
 
         factor.name = name
         factor.mixed = mixed
         factor.good_range = good_range
         factor.bad_range = bad_range
-        factor.ratio = ratio
-
-        factor.current_amount = 0
-        factor.current_ratio = 0
-
         self._factors.append(factor)
-
-        # self._factors.append({
-        #     'name': name,
-        #     'good_range': good_range,
-        #     'bad_range': bad_range,
-        #     'ratio': ratio,
-        #     'mixed': mixed,
-        #     'current_amount': 0
-        # })
 
     def _go_to_next_factor(self):
         self._last_factor += 1
@@ -66,12 +53,29 @@ class python_dataset_generator:
     def _create_negative_factor_row(self):
         row = list()
         for factor in self._factors:
-            positive_range_min = factor.bad_range[0]
+            negative_range_min = factor.bad_range[0]
             if len(factor.bad_range) > 1:
-                positive_range_max = factor.bad_range[1]
-                val = random.randint(positive_range_min, positive_range_max)
+                negative_range_max = factor.bad_range[1]
+                val = random.randint(negative_range_min, negative_range_max)
             else:
-                val = positive_range_min
+                val = negative_range_min
+
+            row.append(val)
+        return row
+
+    def _create_mixed_factor_row(self):
+        row = list()
+        for factor in self._factors:
+            positive_range_min = factor.good_range[0]
+            negative_range_min = factor.bad_range[0]
+            if len(factor.bad_range) > 1:
+                positive_range_max = factor.good_range[1]
+                val = random.randint(negative_range_min, positive_range_max)
+            else:
+                if random.choice([True, False]):
+                    val = negative_range_min
+                else:
+                    val = positive_range_min
 
             row.append(val)
         return row
@@ -95,23 +99,25 @@ class python_dataset_generator:
 
             weighted_random = [True] * self._positive_ratio + [False] * (100-self._positive_ratio)
 
-            for id, row in enumerate(range(self._rows)):
-                data_choice = random.choice(weighted_random)
+            for num, row in enumerate(range(self._rows)):
 
-                if data_choice:
-                    output_row = self._create_positive_factor_row()
+                if self.enable_mixed_data:
+                    output_row = self._create_mixed_factor_row()
                 else:
-                    output_row = self._create_negative_factor_row()
+                    data_choice = random.choice(weighted_random)
 
-                if self._enable_incremental_id:
-                    output_row.insert(0, id+1)
+                    if data_choice:
+                        output_row = self._create_positive_factor_row()
+                    else:
+                        output_row = self._create_negative_factor_row()
+
+                if self.enable_incremental_id:
+                    output_row.insert(0, num+1)
 
                 writer.writerow(output_row)
 
     def save(self):
         self._generate()
-
-
 
 if __name__ == "__main__":
     generator = python_dataset_generator()
@@ -120,17 +126,8 @@ if __name__ == "__main__":
     generator.save()
 
 
-
-
-'''
-
-
-
-'''
-
-
 """
-
+    TO DO
    - the mixed data can be from the lower and upper boundaries of the good/bad
    - accommodate floating vs int
    - accountmodate the good being -numbers
